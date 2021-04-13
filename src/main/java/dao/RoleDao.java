@@ -3,11 +3,47 @@ package dao;
 import dto.Role;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoleDao {
     private static final String dbUrl = "jdbc:mysql://localhost:3306/noel";
     private static final String dbUser = "noel";
     private static final String dbPassword = "1234";
+
+    public List<Role> getRoles() {
+        List<Role> roleList = new ArrayList<>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String sql = "SELECT role_id, description FROM role ORDER BY role_id DESC"; // DESC : 내림차순
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            try(ResultSet rs = ps.executeQuery()){
+                while (rs.next()){
+                    int id = rs.getInt("role_id");
+                    String desc = rs.getString("description");
+
+                    roleList.add(new Role(id,desc));
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return roleList;
+
+    }
+
 
     public int addRole(Role role) { // INSERT 실습
         int insertCount = 0; // SQL문 실행했을 때 '몇 건' 실행했습니다에서 카운트를 담을 변수

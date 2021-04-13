@@ -1,6 +1,5 @@
-package dto;
-
 import dao.RoleDao;
+import dto.Role;
 
 public class JDBCExam2 {
     public static void main(String[] args) {
