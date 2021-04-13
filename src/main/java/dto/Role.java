@@ -1,6 +1,14 @@
 package dto;
 
 public class Role {
+
+    //+-------------+--------------+------+-----+---------+-------+
+    //| Field       | Type         | Null | Key | Default | Extra |
+    //+-------------+--------------+------+-----+---------+-------+
+    //| role_id     | int(11)      | NO   | PRI | NULL    |       |
+    //| description | varchar(100) | YES  |     | NULL    |       |
+    //+-------------+--------------+------+-----+---------+-------+
+
     private Integer roleId;
     private String description;
 

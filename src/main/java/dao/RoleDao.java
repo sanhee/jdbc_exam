@@ -9,7 +9,49 @@ public class RoleDao {
     private static final String dbUser = "noel";
     private static final String dbPassword = "1234";
 
-    public Role getRole(Integer roleId){
+    public int addRole(Role role) { // INSERT 실습
+        int insertCount = 0; // SQL문 실행했을 때 '몇 건' 실행했습니다에서 카운트를 담을 변수
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        // INSERT문이기 때문에 ResultSet은 불필요
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+
+            String sql = "INSERT INTO role (role_id, description) VALUES (?, ?)";
+
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, role.getRoleId());
+            ps.setString(2, role.getDescription());
+
+            insertCount = ps.executeUpdate(); // SELECT와 다름
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+        return insertCount;
+    }
+
+    public Role getRole(Integer roleId) { // SELECT 실습
         Role role = null;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -21,10 +63,10 @@ public class RoleDao {
             String sql = "SELECT role_id, description FROM noel.role WHERE role_id = ?";
 
             ps = conn.prepareStatement(sql);
-            ps.setInt(1,roleId); // ? 의 순서를 말함 첫번째 물음표
+            ps.setInt(1, roleId); // ? 의 순서를 말함 첫번째 물음표
             rs = ps.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
                 // 컬럼 인덱스 : SELECT 선택한 요소에 따라
                 String description = rs.getString(2);
                 int id = rs.getInt("role_id");
@@ -32,24 +74,24 @@ public class RoleDao {
                 role = new Role(id, description);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if( rs != null ){
+        } finally {
+            if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
             }
-            if( ps != null ){
+            if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
             }
-            if( conn != null ){
+            if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException throwables) {
