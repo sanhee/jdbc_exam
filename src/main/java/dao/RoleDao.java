@@ -11,6 +11,32 @@ public class RoleDao {
     private static final String dbUser = "noel";
     private static final String dbPassword = "1234";
 
+
+    public int update(int roleId, String toDescription){
+        int updateCount = 0;
+
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        String sql = "UPDATE role SET description = ? WHERE role_id = ?";
+        try(Connection conn = DriverManager.getConnection(dbUrl,dbUser,dbPassword);
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setString(1, toDescription);
+            ps.setInt(2,roleId);
+
+            updateCount = ps.executeUpdate();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return updateCount;
+    }
+
     public int delete(int role_id){
 
         int deleteCount = 0;
