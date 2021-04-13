@@ -11,6 +11,29 @@ public class RoleDao {
     private static final String dbUser = "noel";
     private static final String dbPassword = "1234";
 
+    public int delete(int role_id){
+
+        int deleteCount = 0;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        String sql = "DELETE FROM role WHERE role_id = ?";
+        try(Connection connection = DriverManager.getConnection(dbUrl,dbUser,dbPassword);
+        PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setInt(1,role_id);
+
+            deleteCount = ps.executeUpdate();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return  deleteCount;
+
+    }
+
     public List<Role> getRoles() {
         List<Role> roleList = new ArrayList<>();
 
