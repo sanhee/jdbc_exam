@@ -12,32 +12,32 @@ public class RoleDao {
     private static final String dbPassword = "1234";
 
 
-    public int update(int roleId, String toDescription){
+    public int update(int roleId, String toDescription) {
         int updateCount = 0;
 
-        try{
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         String sql = "UPDATE role SET description = ? WHERE role_id = ?";
-        try(Connection conn = DriverManager.getConnection(dbUrl,dbUser,dbPassword);
-            PreparedStatement ps = conn.prepareStatement(sql)){
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, toDescription);
-            ps.setInt(2,roleId);
+            ps.setInt(2, roleId);
 
             updateCount = ps.executeUpdate();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return updateCount;
     }
 
-    public int delete(int role_id){
+    public int delete(int role_id) {
 
         int deleteCount = 0;
 
@@ -47,16 +47,16 @@ public class RoleDao {
             e.printStackTrace();
         }
         String sql = "DELETE FROM role WHERE role_id = ?";
-        try(Connection connection = DriverManager.getConnection(dbUrl,dbUser,dbPassword);
-        PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setInt(1,role_id);
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, role_id);
 
             deleteCount = ps.executeUpdate();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return  deleteCount;
+        return deleteCount;
 
     }
 
@@ -73,15 +73,15 @@ public class RoleDao {
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            try(ResultSet rs = ps.executeQuery()){
-                while (rs.next()){
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
                     int id = rs.getInt("role_id");
                     String desc = rs.getString("description");
 
-                    roleList.add(new Role(id,desc));
+                    roleList.add(new Role(id, desc));
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -138,53 +138,34 @@ public class RoleDao {
 
     public Role getRole(Integer roleId) { // SELECT 실습
         Role role = null;
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            String sql = "SELECT role_id, description FROM noel.role WHERE role_id = ?";
-
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, roleId); // ? 의 순서를 말함 첫번째 물음표
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                // 컬럼 인덱스 : SELECT 선택한 요소에 따라
-                String description = rs.getString(2);
-                int id = rs.getInt("role_id");
-
-                role = new Role(id, description);
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
         }
 
+        String sql = "SELECT role_id, description FROM noel.role WHERE role_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, roleId); // ? 의 순서를 말함 첫번째 물음표
+
+            try(ResultSet rs = ps.executeQuery()){
+                if (rs.next()) {
+                    // 컬럼 인덱스 : SELECT 선택한 요소에 따라
+                    String description = rs.getString(2);
+                    int id = rs.getInt("role_id");
+
+                    role = new Role(id, description);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return role;
     }
